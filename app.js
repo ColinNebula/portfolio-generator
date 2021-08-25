@@ -1,48 +1,4 @@
-// const fs = require('fs');
-//ES5 code 
-// const generateSite = require('./utils/generate-site.js');
-//ES6 code 
-const { writeFile, copyFile } = require('./utils/generate-site.js');
-const inquirer = require('inquirer');
-const generatePage = require('./src/page-template');
 
-const promptUser = () => { 
-  return inquirer.prompt([
-    {
-      type: 'input',
-      name: 'name',
-      message: 'What is your name? (Required)',
-      // Validate the properties to check if a valid value was provided by the user
-      validate: nameInput => {
-        if (nameInput) {
-          return true;
-        } else {
-          console.log('Please enter your name!');
-          return false;
-        }
-      }
-    },
-    {
-      type: 'input',
-      name: 'github',
-      message: 'Enter your GitHub Username (Required)',
-      validate: nameInput => {
-        if (nameInput) {
-          return true;
-        } else {
-          console.log('Please enter your name!');
-          return false;
-        }
-      }
-    },
-    {
-      type: 'input',
-      name: 'about',
-      message: 'Provide some information about yourself:',
-      when: ({ confirmAbout }) => confirmAbout
-    },
-  ])
-}
   const promptProject = portfolioData => {
     
     console.log(`
@@ -50,6 +6,7 @@ const promptUser = () => {
   Add a New Project
   =================
   `);
+
   // If there's no 'projects' array property, create one
   if (!portfolioData.projects) {
     portfolioData.projects = [];
@@ -139,6 +96,34 @@ promptUser()
   .catch(err => {
     console.log(err);
   });
+
+const [name, github] = profileDataArgs;
+
+const generatePage = (name, github) => {
+  return `
+  <!DOCTYPE html> 
+  <html lang="en"> 
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Portfolio Demo</title>
+  </head>
+
+  <body>
+    <h1>${name}</h1>
+    <h2><a href="https://github.com/${github}">Github</a></h2>
+  </body>
+  </html>
+  `;
+};
+
+fs.writeFile('./index.html', generatePage(name, github), err => {
+  if (err) throw new Error(err);
+
+  console.log('Portfolio complete! Check out index.html to see the output!');
+});
+
 // promptUser()
 //   .then(promptProject)
 //   .then(portfolioData => {
